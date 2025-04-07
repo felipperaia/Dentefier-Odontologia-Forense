@@ -111,6 +111,134 @@
       font-weight: bold;
     }
     
+    /* Estilo para a galeria de evidências */
+    .evidence-upload-container {
+      background-color: #444;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .upload-actions {
+      margin-top: 15px;
+    }
+    
+    .evidence-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      min-height: 100px;
+    }
+    
+    .evidence-item {
+      position: relative;
+      height: 150px;
+      background-color: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .evidence-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .evidence-delete {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 5;
+    }
+    
+    .evidence-delete:hover {
+      background-color: rgba(255,0,0,0.7);
+    }
+    
+    .no-evidence {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #888;
+      padding: 20px;
+    }
+    
+    /* Estilo para o modal de imagem */
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 50px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.9);
+    }
+    
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    
+    .close-modal:hover {
+      color: #bbb;
+    }
+    
+    #modalCaption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
+    }
+    
+    .btn-secondary {
+      background-color: #555;
+      color: var(--cor-texto);
+      border: 1px solid var(--cor-destaque);
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #666;
+      color: var(--cor-destaque);
+    }
+    
     /* Responsividade para a tabela odontológica */
     @media (max-width: 768px) {
       .arcade {
@@ -118,12 +246,20 @@
         grid-template-rows: repeat(2, 1fr);
         gap: 10px;
       }
+      
+      .evidence-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 576px) {
       .arcade {
         grid-template-columns: repeat(4, 1fr);
         grid-template-rows: repeat(4, 1fr);
+      }
+      
+      .evidence-gallery {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -400,8 +536,74 @@
             <textarea name="anomaliasDentarias" id="anomaliasDentarias" placeholder="Descreva anomalias dentárias encontradas" class="input-large"></textarea>
           </div>
           
+          <!-- Conclusão Preliminar -->
+          <div class="section-title">
+            <h3>7. Conclusão Preliminar</h3>
+          </div>
+          <div class="form-group">
+            <textarea name="conclusaoPreliminar" id="conclusaoPreliminar" placeholder="Descreva a conclusão preliminar do caso" class="input-large" rows="5"></textarea>
+          </div>
+          
+          <!-- Responsáveis pela Perícia -->
+          <div class="section-title">
+            <h3>8. Responsáveis pela Perícia</h3>
+          </div>
+          <div class="form-group">
+            <input type="text" name="nomePerito" placeholder="Nome do perito odontolegista" required class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="cro" placeholder="CRO (Conselho Regional de Odontologia)" required class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="instituicao" placeholder="Instituição" required class="input-large">
+          </div>
+          <div class="form-group">
+            <label for="assinatura">Assinatura digital / física:</label>
+            <input type="file" name="assinatura" id="assinatura" accept="image/*" class="input-large">
+            <p class="file-hint">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2MB</p>
+          </div>
+          <div class="form-group">
+            <input type="text" name="nomeAuxiliar" placeholder="Nome do auxiliar (se houver)" class="input-large">
+          </div>
+          
+          <!-- Observações Gerais -->
+          <div class="section-title">
+            <h3>9. Observações Gerais</h3>
+          </div>
+          <div class="form-group">
+            <textarea name="observacoesGerais" id="observacoesGerais" placeholder="Campo para observações e observações legais específicas" class="input-large" rows="4"></textarea>
+          </div>
+          
+          <!-- Anexo de evidências -->
+          <div class="section-title">
+            <h3>10. Anexo de evidências</h3>
+          </div>
+          <div class="form-group">
+            <div class="evidence-upload-container">
+              <label for="evidenciasUpload">Adicionar imagens de evidências:</label>
+              <input type="file" id="evidenciasUpload" accept="image/*" multiple class="input-large">
+              <p class="file-hint">Selecione múltiplos arquivos segurando CTRL. Formatos aceitos: JPG, PNG, GIF</p>
+              
+              <div class="upload-actions">
+                <button type="button" id="adicionarEvidencias" class="btn-secondary">Adicionar à galeria</button>
+              </div>
+            </div>
+            
+            <div class="evidence-gallery" id="galeriaEvidencias">
+              <!-- As imagens serão adicionadas aqui dinamicamente via JavaScript -->
+              <p class="no-evidence">Nenhuma evidência adicionada.</p>
+            </div>
+            
+            <!-- Modal para visualização de imagem -->
+            <div id="imageModal" class="image-modal">
+              <span class="close-modal">&times;</span>
+              <img class="modal-content" id="modalImage">
+              <div id="modalCaption"></div>
+            </div>
+          </div>
+          
           <div class="action-buttons">
-            <button type="button" class="btn-proxima" onclick="window.location.href='dashboard_perito.html'">← Voltar</button>
+            <button type="button" class="btn-proxima" onclick="window.location.href='index.html'">← Voltar</button>
             <button type="submit" class="btn-proxima">Salvar e Finalizar</button>
           </div>
         </form>
@@ -475,6 +677,116 @@
       e.preventDefault();
       // Aqui você adicionaria o código para salvar os dados do formulário
       alert('Detalhes salvos com sucesso!');
+    });
+    
+    // Funcionalidade para o anexo de evidências
+    document.addEventListener('DOMContentLoaded', function() {
+      const evidenciasUpload = document.getElementById('evidenciasUpload');
+      const adicionarEvidencias = document.getElementById('adicionarEvidencias');
+      const galeriaEvidencias = document.getElementById('galeriaEvidencias');
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalCaption = document.getElementById('modalCaption');
+      const closeModal = document.querySelector('.close-modal');
+      
+      // Contador para gerar IDs únicos para as imagens
+      let evidenceCounter = 0;
+      
+      // Abrir modal ao clicar em uma imagem
+      function openModal(img, alt) {
+        modal.style.display = "block";
+        modalImg.src = img;
+        modalCaption.innerHTML = alt || "Evidência do caso";
+      }
+      
+      // Fechar modal ao clicar no X
+      closeModal.onclick = function() {
+        modal.style.display = "none";
+      }
+      
+      // Fechar modal ao clicar fora da imagem
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+      
+      // Adicionar evidências à galeria
+      adicionarEvidencias.addEventListener('click', function() {
+        const files = evidenciasUpload.files;
+        
+        if (files.length === 0) {
+          alert('Por favor, selecione pelo menos uma imagem para adicionar.');
+          return;
+        }
+        
+        // Remover mensagem "Nenhuma evidência adicionada" se existir
+        const noEvidence = galeriaEvidencias.querySelector('.no-evidence');
+        if (noEvidence) {
+          noEvidence.remove();
+        }
+        
+        // Processar cada arquivo selecionado
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          // Verificar se o arquivo é uma imagem
+          if (!file.type.match('image.*')) {
+            continue;
+          }
+          
+          const reader = new FileReader();
+          
+          reader.onload = (function(theFile) {
+            return function(e) {
+              // Gerar ID único para esta evidência
+              const evidenceId = 'evidence-' + evidenceCounter++;
+              
+              // Criar elemento de galeria
+              const evidenceItem = document.createElement('div');
+              evidenceItem.className = 'evidence-item';
+              evidenceItem.id = evidenceId;
+              
+              // Criar imagem
+              const img = document.createElement('img');
+              img.className = 'evidence-img';
+              img.src = e.target.result;
+              img.alt = theFile.name;
+              img.addEventListener('click', function() {
+                openModal(this.src, this.alt);
+              });
+              
+              // Criar botão de exclusão
+              const deleteBtn = document.createElement('div');
+              deleteBtn.className = 'evidence-delete';
+              deleteBtn.textContent = 'x';
+              deleteBtn.addEventListener('click', function(event) {
+                event.stopPropagation(); // Evitar que o clique propague para a imagem
+                document.getElementById(evidenceId).remove();
+                
+                // Se não houver mais evidências, mostrar a mensagem novamente
+                if (galeriaEvidencias.children.length === 0) {
+                  const noEvidence = document.createElement('p');
+                  noEvidence.className = 'no-evidence';
+                  noEvidence.textContent = 'Nenhuma evidência adicionada.';
+                  galeriaEvidencias.appendChild(noEvidence);
+                }
+              });
+              
+              // Adicionar elementos à galeria
+              evidenceItem.appendChild(img);
+              evidenceItem.appendChild(deleteBtn);
+              galeriaEvidencias.appendChild(evidenceItem);
+            };
+          })(file);
+          
+          // Ler o arquivo como URL de dados
+          reader.readAsDataURL(file);
+        }
+        
+        // Limpar o input de upload para permitir adicionar os mesmos arquivos novamente se necessário
+        evidenciasUpload.value = '';
+      });
     });
   </script>
 </body>

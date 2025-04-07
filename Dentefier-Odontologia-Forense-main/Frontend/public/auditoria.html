@@ -6,6 +6,53 @@
   <title>Auditoria de Atividades</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/auditoria.js" defer></script>
+  <style>
+    .filter-section {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .toggle-filters-btn {
+      margin: 15px 0;
+    }
+    
+    /* Estilo para alinhar os botões */
+    .buttons-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+    
+    /* Estilo para o dropdown de tipo de crime */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #393E46;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 4px;
+      width: 100%;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .dropdown-content a {
+      color: #EEEEEE;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+    
+    .dropdown-content a:hover {
+      background-color: #555;
+    }
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -13,35 +60,102 @@
     <nav>
       <ul>
         <li><a href="dashboard_admin.html">Dashboard</a></li>
-        <li><a href="auditoria.html">Auditoria</a></li>
+        <li><a href="auditoria.html" class="active">Auditoria</a></li>
         <li><a href="relatorios.html">Relatórios</a></li>
         <li><a href="configuracoes.html">Configurações</a></li>
         <li><a href="logout.html">Sair</a></li>
       </ul>
     </nav>
   </header>
+
   <main>
     <section>
       <h2>Logs de Atividades</h2>
-      <div class="form-container-auditoria">
-        <label for="filter-date">Filtrar por Data:</label>
-        <input type="date" id="filter-date">
+      <div class="container audit-container">
         
-        <table id="log-table">
-          <thead>
-            <tr>
-              <th>Data e Hora</th>
-              <th>Usuário</th>
-              <th>Ação</th>
-              <th>Detalhes</th>
-            </tr>
-          </thead>
-          <tbody>
+        <!-- Botão para exibir filtros -->
+        <button id="toggle-filters" class="btn-secondary toggle-filters-btn">Filtros</button>
+
+        <!-- Seção de Filtros (inicialmente oculta) -->
+        <div class="filter-section" id="filter-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filter-date">Data Inicial:</label>
+              <input type="date" id="filter-date-start" class="input-large">
+            </div>
+            <div class="form-group">
+              <label for="filter-date-end">Data Final:</label>
+              <input type="date" id="filter-date-end" class="input-large">
+            </div>
+            <div class="form-group">
+              <label for="filter-status">Status:</label>
+              <select id="filter-status" class="input-large">
+                <option value="">Todos</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="arquivado">Arquivado</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filter-identificado">Identificado:</label>
+              <select id="filter-identificado" class="input-large">
+                <option value="">Todos</option>
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="filter-crime">Tipo de Crime:</label>
+              <select id="filter-crime" class="input-large">
+                <option value="">Todos os tipos</option>
+                <option value="homicidio">Homicídio</option>
+                <option value="agressao_fisica">Agressão física</option>
+                <option value="violencia_domestica">Violência doméstica</option>
+                <option value="abuso_sexual">Abuso sexual</option>
+                <option value="desaparecido">Desaparecido (reconhecimento)</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+          </div>
+          <div class="buttons-container">
+            <button id="limpar-filtro" class="btn-secondary">Limpar Filtros</button>
+            <button id="aplicar-filtro" class="btn-primary">Aplicar Filtros</button>
+          </div>
+        </div>
+
+        <!-- Registros -->
+        <div class="section-title">
+          <h3>Registros de Atividades</h3>
+        </div>
+
+        <div class="log-list">
+          <ul id="activity-logs">
             <!-- Logs serão inseridos aqui dinamicamente -->
-          </tbody>
-        </table>
+          </ul>
+
+          <div class="pagination">
+            <button id="prev-page" class="btn-secondary" disabled>Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button id="next-page" class="btn-secondary" disabled>Próximo</button>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleButton = document.getElementById('toggle-filters');
+      const filterSection = document.getElementById('filter-section');
+
+      toggleButton.addEventListener('click', () => {
+        filterSection.style.display = filterSection.style.display === 'none' || filterSection.style.display === '' 
+          ? 'block' 
+          : 'none';
+      });
+    });
+  </script>
 </body>
 </html>
