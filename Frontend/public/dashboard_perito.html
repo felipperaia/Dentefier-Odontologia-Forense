@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard de Casos - Perito</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Dashboard de Casos</h1>
+    <nav>
+      <ul>
+        <li><a href="#novoCaso">Cadastrar Novo Caso</a></li>
+        <li><a href="#gerenciarCasos">Gerenciar Casos</a></li>
+        <li><a href="#uploadEvidencias">Upload de Evidências</a></li>
+        <li><a href="#analiseComparativa">Análise Comparativa</a></li>
+        <li><a href="#gerarLaudo">Gerar Laudo</a></li>
+        <li><a href="#bancoOdontoLegal">Banco Odonto-Legal</a></li>
+        <li><a href="logout.html">Sair</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="novoCaso">
+      <h2>Cadastrar Novo Caso</h2>
+      <form id="form-caso">
+        <fieldset>
+          <legend>Identificação Básica</legend>
+          <input type="text" name="numeroCaso" placeholder="Número do Caso" required>
+          <input type="text" name="titulo" placeholder="Título do Caso" required>
+          <input type="date" name="dataAbertura" required>
+          <input type="text" name="responsavel" placeholder="Responsável pelo Caso" required>
+          <select name="status" required>
+            <option value="">Selecione o Status</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Arquivado">Arquivado</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Contexto do Caso</legend>
+          <input type="text" name="tipoCaso" placeholder="Tipo de Caso" required>
+          <input type="text" name="origemDemanda" placeholder="Origem da Demanda" required>
+          <textarea name="descricao" placeholder="Descrição detalhada" required></textarea>
+        </fieldset>
+        <!-- Outros fieldsets para Dados do Indivíduo, Documentação, Cadeia de Custódia e Histórico -->
+        <button type="submit">Cadastrar Caso</button>
+      </form>
+    </section>
+    <!-- Seções para Gerenciar Casos, Upload, etc. podem ser adicionadas conforme necessário -->
+  </main>
+</body>
+</html>
