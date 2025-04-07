@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro de Usuário</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Usando defer para garantir que o script seja carregado após o DOM -->
+  <script src="js/register.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Registro de Usuário</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard_admin.html">Dashboard</a></li>
+        <li><a href="auditoria.html">Auditoria</a></li>
+        <li><a href="relatorios.html">Relatórios</a></li>
+        <li><a href="configuracoes.html">Configurações</a></li>
+        <li><a href="logout.html">Sair</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Criação de Novo Usuário</h2>
+      <div class="form-container">
+        <!-- Ajustando o ID do formulário para corresponder ao código JS -->
+        <form id="userRegisterForm">
+          <label for="username">Nome de Usuário</label>
+          <input type="text" id="username" name="username" required>
+
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required>
+
+          <label for="role">Tipo de Usuário</label>
+          <select id="role" name="role" required>
+            <option value="admin">Administrador</option>
+            <option value="perito">Perito</option>
+            <option value="assistente">Assistente</option>
+          </select>
+
+          <button type="submit">Registrar</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

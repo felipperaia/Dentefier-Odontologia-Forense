@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auditoria de Atividades</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/auditoria.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Auditoria de Atividades</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard_admin.html">Dashboard</a></li>
+        <li><a href="auditoria.html">Auditoria</a></li>
+        <li><a href="relatorios.html">Relatórios</a></li>
+        <li><a href="configuracoes.html">Configurações</a></li>
+        <li><a href="logout.html">Sair</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Logs de Atividades</h2>
+      <div class="form-container-auditoria">
+        <label for="filter-date">Filtrar por Data:</label>
+        <input type="date" id="filter-date">
+        
+        <table id="log-table">
+          <thead>
+            <tr>
+              <th>Data e Hora</th>
+              <th>Usuário</th>
+              <th>Ação</th>
+              <th>Detalhes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Logs serão inseridos aqui dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
