@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard de Casos - Perito</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js" defer></script>
+  <style>
+    /* Estilo específico para o botão de próxima etapa */
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .btn-proxima {
+      background-color: var(--cor-destaque);
+      color: var(--cor-secundaria);
+      border: none;
+      padding: 15px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      flex: 1;
+      text-align: center;
+      display: block;
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .btn-proxima:hover {
+      background-color: #e6c55a;
+    }
+    
+    /* Estilo para a tabela odontológica */
+    .odonto-grid {
+      background-color: #444;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .odonto-info {
+      margin-bottom: 15px;
+    }
+
+    .odonto-info p {
+      color: var(--cor-texto);
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .arcade-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .arcade {
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 5px;
+      padding: 10px;
+      background-color: #333;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .arcade:before {
+      content: 'Arcada Superior';
+      position: absolute;
+      top: -25px;
+      left: 0;
+      color: var(--cor-destaque);
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .arcade.inferior:before {
+      content: 'Arcada Inferior';
+    }
+
+    .dente-container {
+      text-align: center;
+      background-color: #555;
+      border-radius: 4px;
+      padding: 5px 2px;
+    }
+
+    .dente-container label {
+      display: block;
+      font-size: 12px;
+      color: var(--cor-texto);
+      margin-top: 3px;
+      cursor: pointer;
+    }
+
+    .dente-container input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .dente-container:hover {
+      background-color: #666;
+    }
+
+    .dente-container input[type="checkbox"]:checked + label {
+      color: var(--cor-destaque);
+      font-weight: bold;
+    }
+    
+    /* Estilo para a galeria de evidências */
+    .evidence-upload-container {
+      background-color: #444;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .upload-actions {
+      margin-top: 15px;
+    }
+    
+    .evidence-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      min-height: 100px;
+    }
+    
+    .evidence-item {
+      position: relative;
+      height: 150px;
+      background-color: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .evidence-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .evidence-delete {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 5;
+    }
+    
+    .evidence-delete:hover {
+      background-color: rgba(255,0,0,0.7);
+    }
+    
+    .no-evidence {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #888;
+      padding: 20px;
+    }
+    
+    /* Estilo para o modal de imagem */
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 50px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.9);
+    }
+    
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    
+    .close-modal:hover {
+      color: #bbb;
+    }
+    
+    #modalCaption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
+    }
+    
+    .btn-secondary {
+      background-color: #555;
+      color: var(--cor-texto);
+      border: 1px solid var(--cor-destaque);
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #666;
+      color: var(--cor-destaque);
+    }
+    
+    /* Responsividade para a tabela odontológica */
+    @media (max-width: 768px) {
+      .arcade {
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+      }
+      
+      .evidence-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .arcade {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+      
+      .evidence-gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dashboard de Casos</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Cadastrar Novo Caso</a></li>
+        <li><a href="#gerenciarCasos">Gerenciar Casos</a></li>
+        <li><a href="#uploadEvidencias">Upload de Evidências</a></li>
+        <li><a href="#analiseComparativa">Análise Comparativa</a></li>
+        <li><a href="#gerarLaudo">Gerar Laudo</a></li>
+        <li><a href="#bancoOdontoLegal">Banco Odonto-Legal</a></li>
+        <li><a href="logout.html">Sair</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="detalhesColeta">
+      <h2>Detalhes da Coleta e Procedimentos</h2>
+      <div class="container">
+        <form id="form-detalhes">
+          <!-- Local e Condições da Coleta -->
+          <div class="section-title">
+            <h3>3. Local e Condições da Coleta</h3>
+          </div>
+          <div class="form-group">
+            <input type="datetime-local" name="dataHoraColeta" placeholder="Data e hora da coleta" required class="input-large">
+          </div>
+          <div class="form-group">
+            <select name="localExame" required class="input-large">
+              <option value="">Selecione o local do exame</option>
+              <option value="Sala de necropsia">Sala de necropsia</option>
+              <option value="Cena do crime">Cena do crime</option>
+              <option value="Laboratório forense">Laboratório forense</option>
+              <option value="Hospital">Hospital</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="form-group" id="outroLocalContainer" style="display: none;">
+            <input type="text" name="outroLocal" id="outroLocalTexto" placeholder="Especifique o local do exame" class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="profissionaisPresentes" placeholder="Nome dos profissionais presentes" required class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="equipamentosUsados" placeholder="Equipamentos usados" required class="input-large">
+          </div>
+          <div class="form-group">
+            <label for="registroFotografico">Registro fotográfico:</label>
+            <input type="file" name="registroFotografico" id="registroFotografico" accept="image/*" multiple class="input-large">
+            <p class="file-hint">Selecione múltiplos arquivos segurando CTRL. Formatos aceitos: JPG, PNG, GIF. Tamanho máximo por arquivo: 5MB</p>
+          </div>
+
+          <!-- Procedimentos Realizados -->
+          <div class="section-title">
+            <h3>4. Procedimentos Realizados</h3>
+          </div>
+          <div class="form-group">
+            <label>Tipo de exame odontológico forense:</label>
+            <select name="tipoExameOdontologico" required class="input-large">
+              <option value="">Selecione o tipo de exame</option>
+              <option value="Identificação humana">Identificação humana</option>
+              <option value="Estimativa de idade">Estimativa de idade</option>
+              <option value="Avaliação de mordida">Avaliação de mordida</option>
+              <option value="Lesão bucomaxilofacial">Lesão bucomaxilofacial</option>
+              <option value="Confronto antemortem x postmortem">Confronto antemortem x postmortem</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="form-group" id="outroExameContainer" style="display: none;">
+            <input type="text" name="outroExame" id="outroExameTexto" placeholder="Especifique o tipo de exame" class="input-large">
+          </div>
+          <div class="form-group">
+            <label for="tecnicasAplicadas">Técnicas aplicadas:</label>
+            <textarea name="tecnicasAplicadas" id="tecnicasAplicadas" placeholder="Descreva as técnicas aplicadas" required class="input-large"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="amostrasColetadas">Amostras coletadas:</label>
+            <textarea name="amostrasColetadas" id="amostrasColetadas" placeholder="DNA bucal, arcada, etc." required class="input-large"></textarea>
+          </div>
+
+          <!-- Informações Antemortem -->
+          <div class="section-title">
+            <h3>5. Informações Antemortem (se houver)</h3>
+          </div>
+          <div class="form-group">
+            <label>Dados odontológicos anteriores disponíveis?</label>
+            <select name="dadosAnteriores" required class="input-large">
+              <option value="">Selecione</option>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </div>
+          <div id="uploadDadosAnteriores" style="display: none;">
+            <div class="form-group">
+              <label for="arquivosDadosAnteriores">Upload de arquivos:</label>
+              <input type="file" name="arquivosDadosAnteriores" id="arquivosDadosAnteriores" multiple class="input-large">
+              <p class="file-hint">Selecione múltiplos arquivos segurando CTRL. Formatos aceitos: PDF, JPG, PNG, DICOM.</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="text" name="dentistaResponsavel" placeholder="Dentista responsável (se houver)" class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="familiarResponsavel" placeholder="Nome do familiar ou responsável por fornecer os dados" class="input-large">
+          </div>
+
+          <!-- Achados Odontológicos -->
+          <div class="section-title">
+            <h3>6. Achados Odontológicos (se houver)</h3>
+          </div>
+          <div class="form-group">
+            <label>Tabela odontológica:</label>
+            <div class="odonto-grid">
+              <div class="odonto-info">
+                <p>Selecione os dentes com alterações clínicas relevantes</p>
+              </div>
+              <div class="arcade-container">
+                <!-- Arcada superior -->
+                <div class="arcade superior">
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-18" name="dentes[]" value="18">
+                    <label for="dente-18">18</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-17" name="dentes[]" value="17">
+                    <label for="dente-17">17</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-16" name="dentes[]" value="16">
+                    <label for="dente-16">16</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-15" name="dentes[]" value="15">
+                    <label for="dente-15">15</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-14" name="dentes[]" value="14">
+                    <label for="dente-14">14</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-13" name="dentes[]" value="13">
+                    <label for="dente-13">13</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-12" name="dentes[]" value="12">
+                    <label for="dente-12">12</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-11" name="dentes[]" value="11">
+                    <label for="dente-11">11</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-21" name="dentes[]" value="21">
+                    <label for="dente-21">21</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-22" name="dentes[]" value="22">
+                    <label for="dente-22">22</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-23" name="dentes[]" value="23">
+                    <label for="dente-23">23</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-24" name="dentes[]" value="24">
+                    <label for="dente-24">24</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-25" name="dentes[]" value="25">
+                    <label for="dente-25">25</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-26" name="dentes[]" value="26">
+                    <label for="dente-26">26</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-27" name="dentes[]" value="27">
+                    <label for="dente-27">27</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-28" name="dentes[]" value="28">
+                    <label for="dente-28">28</label>
+                  </div>
+                </div>
+                <!-- Arcada inferior -->
+                <div class="arcade inferior">
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-48" name="dentes[]" value="48">
+                    <label for="dente-48">48</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-47" name="dentes[]" value="47">
+                    <label for="dente-47">47</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-46" name="dentes[]" value="46">
+                    <label for="dente-46">46</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-45" name="dentes[]" value="45">
+                    <label for="dente-45">45</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-44" name="dentes[]" value="44">
+                    <label for="dente-44">44</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-43" name="dentes[]" value="43">
+                    <label for="dente-43">43</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-42" name="dentes[]" value="42">
+                    <label for="dente-42">42</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-41" name="dentes[]" value="41">
+                    <label for="dente-41">41</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-31" name="dentes[]" value="31">
+                    <label for="dente-31">31</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-32" name="dentes[]" value="32">
+                    <label for="dente-32">32</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-33" name="dentes[]" value="33">
+                    <label for="dente-33">33</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-34" name="dentes[]" value="34">
+                    <label for="dente-34">34</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-35" name="dentes[]" value="35">
+                    <label for="dente-35">35</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-36" name="dentes[]" value="36">
+                    <label for="dente-36">36</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-37" name="dentes[]" value="37">
+                    <label for="dente-37">37</label>
+                  </div>
+                  <div class="dente-container">
+                    <input type="checkbox" id="dente-38" name="dentes[]" value="38">
+                    <label for="dente-38">38</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lesoesEncontradas">Lesões encontradas:</label>
+            <textarea name="lesoesEncontradas" id="lesoesEncontradas" placeholder="Descreva as lesões encontradas" class="input-large"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fraturasTraumas">Fraturas/traumas:</label>
+            <textarea name="fraturasTraumas" id="fraturasTraumas" placeholder="Descreva as fraturas e traumas" class="input-large"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="reconstrucoesProteticos">Reconstruções/protéticos:</label>
+            <textarea name="reconstrucoesProteticos" id="reconstrucoesProteticos" placeholder="Descreva reconstruções e elementos protéticos" class="input-large"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="anomaliasDentarias">Anomalias dentárias:</label>
+            <textarea name="anomaliasDentarias" id="anomaliasDentarias" placeholder="Descreva anomalias dentárias encontradas" class="input-large"></textarea>
+          </div>
+          
+          <!-- Conclusão Preliminar -->
+          <div class="section-title">
+            <h3>7. Conclusão Preliminar</h3>
+          </div>
+          <div class="form-group">
+            <textarea name="conclusaoPreliminar" id="conclusaoPreliminar" placeholder="Descreva a conclusão preliminar do caso" class="input-large" rows="5"></textarea>
+          </div>
+          
+          <!-- Responsáveis pela Perícia -->
+          <div class="section-title">
+            <h3>8. Responsáveis pela Perícia</h3>
+          </div>
+          <div class="form-group">
+            <input type="text" name="nomePerito" placeholder="Nome do perito odontolegista" required class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="cro" placeholder="CRO (Conselho Regional de Odontologia)" required class="input-large">
+          </div>
+          <div class="form-group">
+            <input type="text" name="instituicao" placeholder="Instituição" required class="input-large">
+          </div>
+          <div class="form-group">
+            <label for="assinatura">Assinatura digital / física:</label>
+            <input type="file" name="assinatura" id="assinatura" accept="image/*" class="input-large">
+            <p class="file-hint">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2MB</p>
+          </div>
+          <div class="form-group">
+            <input type="text" name="nomeAuxiliar" placeholder="Nome do auxiliar (se houver)" class="input-large">
+          </div>
+          
+          <!-- Observações Gerais -->
+          <div class="section-title">
+            <h3>9. Observações Gerais</h3>
+          </div>
+          <div class="form-group">
+            <textarea name="observacoesGerais" id="observacoesGerais" placeholder="Campo para observações e observações legais específicas" class="input-large" rows="4"></textarea>
+          </div>
+          
+          <!-- Anexo de evidências -->
+          <div class="section-title">
+            <h3>10. Anexo de evidências</h3>
+          </div>
+          <div class="form-group">
+            <div class="evidence-upload-container">
+              <label for="evidenciasUpload">Adicionar imagens de evidências:</label>
+              <input type="file" id="evidenciasUpload" accept="image/*" multiple class="input-large">
+              <p class="file-hint">Selecione múltiplos arquivos segurando CTRL. Formatos aceitos: JPG, PNG, GIF</p>
+              
+              <div class="upload-actions">
+                <button type="button" id="adicionarEvidencias" class="btn-secondary">Adicionar à galeria</button>
+              </div>
+            </div>
+            
+            <div class="evidence-gallery" id="galeriaEvidencias">
+              <!-- As imagens serão adicionadas aqui dinamicamente via JavaScript -->
+              <p class="no-evidence">Nenhuma evidência adicionada.</p>
+            </div>
+            
+            <!-- Modal para visualização de imagem -->
+            <div id="imageModal" class="image-modal">
+              <span class="close-modal">&times;</span>
+              <img class="modal-content" id="modalImage">
+              <div id="modalCaption"></div>
+            </div>
+          </div>
+          
+          <div class="action-buttons">
+            <button type="button" class="btn-proxima" onclick="window.location.href='index.html'">← Voltar</button>
+            <button type="submit" class="btn-proxima">Salvar e Finalizar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Script para mostrar campo de texto quando "Outro" for selecionado no local de exame
+    document.querySelector('select[name="localExame"]').addEventListener('change', function() {
+      const outroLocalContainer = document.getElementById('outroLocalContainer');
+      const outroLocalTexto = document.getElementById('outroLocalTexto');
+      
+      if (this.value === 'Outro') {
+        outroLocalContainer.style.display = 'block';
+        outroLocalTexto.required = true;
+      } else {
+        outroLocalContainer.style.display = 'none';
+        outroLocalTexto.required = false;
+      }
+    });
+    
+    // Script para mostrar campo de texto quando "Outro" for selecionado no tipo de exame
+    document.querySelector('select[name="tipoExameOdontologico"]').addEventListener('change', function() {
+      const outroExameContainer = document.getElementById('outroExameContainer');
+      const outroExameTexto = document.getElementById('outroExameTexto');
+      
+      if (this.value === 'Outro') {
+        outroExameContainer.style.display = 'block';
+        outroExameTexto.required = true;
+      } else {
+        outroExameContainer.style.display = 'none';
+        outroExameTexto.required = false;
+      }
+    });
+    
+    // Script para mostrar campo de upload quando "Sim" for selecionado em dados odontológicos anteriores
+    document.querySelector('select[name="dadosAnteriores"]').addEventListener('change', function() {
+      const uploadDadosAnteriores = document.getElementById('uploadDadosAnteriores');
+      
+      if (this.value === 'sim') {
+        uploadDadosAnteriores.style.display = 'block';
+      } else {
+        uploadDadosAnteriores.style.display = 'none';
+      }
+    });
+    
+    // Verificar seleções iniciais quando a página é carregada
+    window.addEventListener('DOMContentLoaded', function() {
+      // Verificar local de exame
+      const localExame = document.querySelector('select[name="localExame"]');
+      if (localExame.value === 'Outro') {
+        document.getElementById('outroLocalContainer').style.display = 'block';
+      }
+      
+      // Verificar tipo de exame
+      const tipoExame = document.querySelector('select[name="tipoExameOdontologico"]');
+      if (tipoExame.value === 'Outro') {
+        document.getElementById('outroExameContainer').style.display = 'block';
+      }
+      
+      // Verificar dados anteriores
+      const dadosAnteriores = document.querySelector('select[name="dadosAnteriores"]');
+      if (dadosAnteriores.value === 'sim') {
+        document.getElementById('uploadDadosAnteriores').style.display = 'block';
+      }
+    });
+    
+    // Tratamento para envio do formulário
+    document.getElementById('form-detalhes').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Aqui você adicionaria o código para salvar os dados do formulário
+      alert('Detalhes salvos com sucesso!');
+    });
+    
+    // Funcionalidade para o anexo de evidências
+    document.addEventListener('DOMContentLoaded', function() {
+      const evidenciasUpload = document.getElementById('evidenciasUpload');
+      const adicionarEvidencias = document.getElementById('adicionarEvidencias');
+      const galeriaEvidencias = document.getElementById('galeriaEvidencias');
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalCaption = document.getElementById('modalCaption');
+      const closeModal = document.querySelector('.close-modal');
+      
+      // Contador para gerar IDs únicos para as imagens
+      let evidenceCounter = 0;
+      
+      // Abrir modal ao clicar em uma imagem
+      function openModal(img, alt) {
+        modal.style.display = "block";
+        modalImg.src = img;
+        modalCaption.innerHTML = alt || "Evidência do caso";
+      }
+      
+      // Fechar modal ao clicar no X
+      closeModal.onclick = function() {
+        modal.style.display = "none";
+      }
+      
+      // Fechar modal ao clicar fora da imagem
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+      
+      // Adicionar evidências à galeria
+      adicionarEvidencias.addEventListener('click', function() {
+        const files = evidenciasUpload.files;
+        
+        if (files.length === 0) {
+          alert('Por favor, selecione pelo menos uma imagem para adicionar.');
+          return;
+        }
+        
+        // Remover mensagem "Nenhuma evidência adicionada" se existir
+        const noEvidence = galeriaEvidencias.querySelector('.no-evidence');
+        if (noEvidence) {
+          noEvidence.remove();
+        }
+        
+        // Processar cada arquivo selecionado
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          // Verificar se o arquivo é uma imagem
+          if (!file.type.match('image.*')) {
+            continue;
+          }
+          
+          const reader = new FileReader();
+          
+          reader.onload = (function(theFile) {
+            return function(e) {
+              // Gerar ID único para esta evidência
+              const evidenceId = 'evidence-' + evidenceCounter++;
+              
+              // Criar elemento de galeria
+              const evidenceItem = document.createElement('div');
+              evidenceItem.className = 'evidence-item';
+              evidenceItem.id = evidenceId;
+              
+              // Criar imagem
+              const img = document.createElement('img');
+              img.className = 'evidence-img';
+              img.src = e.target.result;
+              img.alt = theFile.name;
+              img.addEventListener('click', function() {
+                openModal(this.src, this.alt);
+              });
+              
+              // Criar botão de exclusão
+              const deleteBtn = document.createElement('div');
+              deleteBtn.className = 'evidence-delete';
+              deleteBtn.textContent = 'x';
+              deleteBtn.addEventListener('click', function(event) {
+                event.stopPropagation(); // Evitar que o clique propague para a imagem
+                document.getElementById(evidenceId).remove();
+                
+                // Se não houver mais evidências, mostrar a mensagem novamente
+                if (galeriaEvidencias.children.length === 0) {
+                  const noEvidence = document.createElement('p');
+                  noEvidence.className = 'no-evidence';
+                  noEvidence.textContent = 'Nenhuma evidência adicionada.';
+                  galeriaEvidencias.appendChild(noEvidence);
+                }
+              });
+              
+              // Adicionar elementos à galeria
+              evidenceItem.appendChild(img);
+              evidenceItem.appendChild(deleteBtn);
+              galeriaEvidencias.appendChild(evidenceItem);
+            };
+          })(file);
+          
+          // Ler o arquivo como URL de dados
+          reader.readAsDataURL(file);
+        }
+        
+        // Limpar o input de upload para permitir adicionar os mesmos arquivos novamente se necessário
+        evidenciasUpload.value = '';
+      });
+    });
+  </script>
+</body>
+</html>
